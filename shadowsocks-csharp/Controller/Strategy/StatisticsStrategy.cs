@@ -30,7 +30,15 @@ namespace Shadowsocks.Controller.Strategy
             var randomIndex = InitIndex();
             //var randomIndex = new Random().Next() % servers.Count;
             #endregion
-            _currentServer = servers[randomIndex];  //choose a server randomly at first
+            //如果servers中一个服务器都没有，那说明用户先订阅成功然后再删除了默认节点，因此将第一个订阅的第一台服务器置为默认服务器
+            if(servers.Count==0)
+            {
+                _currentServer = controller.GetCurrentConfiguration().subscriptions[0].servers[0];
+            }
+            else
+            {
+                _currentServer = servers[randomIndex];  //choose a server randomly at first
+            }
             _timer = new Timer(ReloadStatisticsAndChooseAServer);
         }
 
